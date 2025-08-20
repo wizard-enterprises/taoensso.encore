@@ -1125,19 +1125,19 @@ improve these docs!"
 #?(:clj
    (defn-     api:without-filters [*rt-call-filter*]
      `(defmacro ~'without-filters
-        "Executes form without any runtime call filters."
-        ~'[form] `(binding [~'~*rt-call-filter* nil] ~~'form))))
+        "Executes body without any runtime call filters."
+        ~'[& body] `(binding [~'~*rt-call-filter* nil] ~@~'body))))
 
 (comment (api:without-filters `*my-rt-call-filter*))
 
 #?(:clj
    (defn-     api:with-kind-filter [*rt-call-filter*]
      `(defmacro ~'with-kind-filter
-        "Executes form with given call kind filter in effect.
+        "Executes body with given call kind filter in effect.
   See `set-kind-filter!` for details."
-        ~'[kind-filter form]
+        ~'[kind-filter & body]
         `(binding [~'~*rt-call-filter* (update-spec-filter ~'~*rt-call-filter* {:kind-filter ~~'kind-filter})]
-           ~~'form))))
+           ~@~'body))))
 
 (comment (api:with-kind-filter `*my-rt-call-filter*))
 
@@ -1166,11 +1166,11 @@ improve these docs!"
 #?(:clj
    (defn-     api:with-ns-filter [*rt-call-filter*]
      `(defmacro ~'with-ns-filter
-        "Executes form with given call namespace filter in effect.
+        "Executes body with given call namespace filter in effect.
   See `set-ns-filter!` for details."
-        ~'[ns-filter form]
+        ~'[ns-filter & body]
         `(binding [~'~*rt-call-filter* (update-spec-filter ~'~*rt-call-filter* {:ns-filter ~~'ns-filter})]
-           ~~'form))))
+           ~@~'body))))
 
 (comment (api:with-ns-filter `*my-rt-call-filter*))
 
@@ -1200,11 +1200,11 @@ improve these docs!"
 #?(:clj
    (defn-     api:with-id-filter [*rt-call-filter*]
      `(defmacro ~'with-id-filter
-        "Executes form with given call id filter in effect.
+        "Executes body with given call id filter in effect.
   See `set-id-filter!` for details."
-        ~'[id-filter form]
+        ~'[id-filter & body]
         `(binding [~'~*rt-call-filter* (update-spec-filter ~'~*rt-call-filter* {:id-filter ~~'id-filter})]
-           ~~'form))))
+           ~@~'body))))
 
 (comment (api:with-id-filter `*my-rt-call-filter*))
 
@@ -1551,41 +1551,41 @@ improve these docs!"
    (defn- api:with-ctx []
      (let [*ctx* (symbol (str *ns*) "*ctx*")]
        `(defmacro ~'with-ctx
-          "Evaluates given form with given `*ctx*` value. See `*ctx*` for details."
-          ~'[ctx form] `(binding [~'~*ctx* ~~'ctx] ~~'form)))))
+          "Evaluates given body with given `*ctx*` value. See `*ctx*` for details."
+          ~'[ctx & body] `(binding [~'~*ctx* ~~'ctx] ~@~'body)))))
 
 #?(:clj
    (defn- api:with-ctx+ []
      (let [*ctx* (symbol (str *ns*) "*ctx*")]
        `(defmacro ~'with-ctx+
-          "Evaluates given form with updated `*ctx*` value.
+          "Evaluates given body with updated `*ctx*` value.
 
   `update-map-or-fn` may be:
     - A map to merge with    current `*ctx*` value, or
     - A unary fn to apply to current `*ctx*` value
 
   See `*ctx*` for details."
-          ~'[update-map-or-fn form]
-          `(binding [~'~*ctx* (update-ctx ~'~*ctx* ~~'update-map-or-fn)] ~~'form)))))
+          ~'[update-map-or-fn & body]
+          `(binding [~'~*ctx* (update-ctx ~'~*ctx* ~~'update-map-or-fn)] ~@~'body)))))
 
 #?(:clj
    (defn- api:with-xfn []
      (let [*xfn* (symbol (str *ns*) "*xfn*")]
        `(defmacro ~'with-xfn
-          "Evaluates given form with given `*xfn*` value, see `*xfn*` for details."
-          ~'[?xfn form]
-          `(binding [~'~*xfn* ~~'?xfn] ~~'form)))))
+          "Evaluates given body with given `*xfn*` value, see `*xfn*` for details."
+          ~'[?xfn & body]
+          `(binding [~'~*xfn* ~~'?xfn] ~@~'body)))))
 
 #?(:clj
    (defn- api:with-xfn+ []
      (let [*xfn* (symbol (str *ns*) "*xfn*")]
        `(defmacro ~'with-xfn+
-          "Evaluates given form with composed `*xfn*` value.
+          "Evaluates given body with composed `*xfn*` value.
   Same as (with-xfn (comp-xfn *xfn* ?xfn) ...).
   See `*xfn*` for details."
-          ~'[?xfn form]
+          ~'[?xfn & body]
           `(binding [~'~*xfn* (comp-xfn ~'~*xfn* ~~'?xfn)]
-             ~~'form)))))
+             ~@~'body)))))
 
 ;;;;
 
