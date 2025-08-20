@@ -7091,11 +7091,8 @@
     {:deprecated "Encore v3.68.0 (2023-09-25)"}
     newline)
 
-  (defn ^:no-doc -unexpected-arg!
-    "Prefer `unexpected-arg!`"
-    {:deprecated "Encore v3.68.0 (2023-09-25)"}
-    ([arg        ] (truss/unexpected-arg! arg nil))
-    ([arg details] (truss/unexpected-arg! arg details)))
+  (defalias ^{:no-doc true :deprecated "v3.68.0 (2023-09-25)"}
+    -unexpected-arg truss/unexpected-arg!)
 
   (def* ^:no-doc -matching-error
     "Prefer `matching-error`."
