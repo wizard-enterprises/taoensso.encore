@@ -7091,8 +7091,7 @@
     {:deprecated "Encore v3.68.0 (2023-09-25)"}
     newline)
 
-  (defalias ^{:no-doc true :deprecated "v3.68.0 (2023-09-25)"}
-    -unexpected-arg truss/unexpected-arg!)
+  #?(:clj (defalias ^{:no-doc true :deprecated "v3.68.0 (2023-09-25)"} -unexpected-arg truss/unexpected-arg!))
 
   (def* ^:no-doc -matching-error
     "Prefer `matching-error`."
@@ -7302,7 +7301,6 @@
   (defalias ^{:no-doc true :deprecated "v3.135.0 (2025-02-27)"} truss/matching-error)
   (defalias ^{:no-doc true :deprecated "v3.135.0 (2025-02-27)"} truss/catching-rf)
   (defalias ^{:no-doc true :deprecated "v3.135.0 (2025-02-27)"} truss/catching-xform)
-  (defalias ^{:no-doc true :deprecated "v3.135.0 (2025-02-27)"} truss/unexpected-arg!)
   (defalias ^{:no-doc true :deprecated "v3.135.0 (2025-02-27)"} get-truss-data taoensso.truss/get-data)
   #?(:clj
      (do
@@ -7311,6 +7309,7 @@
        (defalias ^{:no-doc true :deprecated "v3.135.0 (2025-02-27)"} truss/throws?)
        (defalias ^{:no-doc true :deprecated "v3.135.0 (2025-02-27)"} truss/critical-error?)
        (defalias ^{:no-doc true :deprecated "v3.135.0 (2025-02-27)"} truss/keep-callsite)
+       (defalias ^{:no-doc true :deprecated "v3.135.0 (2025-02-27)"} truss/unexpected-arg!)
        (defalias ^{:no-doc true :deprecated "v3.135.0 (2025-02-27)"}                 taoensso.truss/have)
        (defalias ^{:no-doc true :deprecated "v3.135.0 (2025-02-27)"}                 taoensso.truss/have!)
        (defalias ^{:no-doc true :deprecated "v3.135.0 (2025-02-27)"}                 taoensso.truss/have?)
