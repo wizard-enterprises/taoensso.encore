@@ -6518,16 +6518,16 @@
                              (do                           :unknown))))}))))
 
               (.setTimeoutInterval xhr (or timeout-ms 0)) ; 0 => no timeout
-              (when with-credentials?
-                (.setWithCredentials xhr true)) ; Requires xhr v2+
-
-              (case resp-type
-                (:auto :text :edn) nil
-                :json              (.setResponseType xhr "json")
-                :xml               (.setResponseType xhr "document")
-                :bin/array-buffer  (.setResponseType xhr "arraybuffer")
-                :bin/blob          (.setResponseType xhr "blob")
-                (when resp-type    (.setResponseType xhr resp-type)))
+              (.setWithCredentials xhr (boolean with-credentials?))
+              (.setResponseType    xhr
+                (case resp-type
+                  (:auto nil)        ""
+                  (:text :edn)       "text"
+                  :json              "json"
+                  :xml               "document"
+                  :bin/array-buffer  "arraybuffer"
+                  :bin/blob          "blob"
+                  resp-type))
 
               (.send xhr (or url+ url) (name method) content (clj->js headers))
 
