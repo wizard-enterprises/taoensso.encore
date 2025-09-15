@@ -281,7 +281,11 @@
          (case c1
            (true :else :default :always :then) c2                          ; Avoid unnecessary (if <truthy> ...)
            (false nil)                             `(-cond ~throw? ~@more) ; Avoid unnecessary (if <falsey> ...)
-           :do               `(do           ~c2     (-cond ~throw? ~@more))
+           :do
+           (if (vector? c2)
+             `(do ~@c2 (-cond ~throw? ~@more))
+             `(do  ~c2 (-cond ~throw? ~@more)))
+
            :let              `(let          ~c2     (-cond ~throw? ~@more))
            :binding          `(core/binding ~c2     (-cond ~throw? ~@more))
            :with-redefs      `(with-redefs  ~c2     (-cond ~throw? ~@more))
