@@ -4172,8 +4172,11 @@
       [(pull-val! a :k) @a]) => [:v {}]"
   ([atom_ k          ] (pull-val! atom_ k nil))
   ([atom_ k not-found]
-   (swap-val! atom_ k not-found
-     (fn [v0] (swapped :swap/dissoc v0)))))
+   (swap-val! atom_ k ::nx
+     (fn [v0]
+       (if (identical-kw? v0 ::nx)
+         (swapped :swap/abort  not-found)
+         (swapped :swap/dissoc v0))))))
 
 (comment (pull-val! (atom {:a :A}) :b :nx))
 
