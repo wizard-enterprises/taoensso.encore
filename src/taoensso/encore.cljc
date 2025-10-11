@@ -2166,15 +2166,15 @@
        "Returns hash int of given byte[]."
        ^long [^bytes x] (java.util.Arrays/hashCode x))
 
-     (defn utf8-ba->str
-       "Returns String by decoding given UTF-8 byte[]."
-       {:inline   (fn [ba] `(let [^"[B" ba# ~ba] (String. ba# java.nio.charset.StandardCharsets/UTF_8)))}
-       ^String [^bytes ba]                       (String. ba  java.nio.charset.StandardCharsets/UTF_8))
-
      (defn str->utf8-ba
-       "Returns given String encoded as a UTF-8 byte[]."
+       "Returns UTF-8 encoded byte[] for given String."
        {:inline   (fn [s] `(let [^String s# ~s] (.getBytes s# java.nio.charset.StandardCharsets/UTF_8)))}
        ^bytes [^String s]                       (.getBytes s  java.nio.charset.StandardCharsets/UTF_8))
+
+     (defn utf8-ba->str
+       "Returns String for given UTF-8 encoded byte[]."
+       {:inline   (fn [ba] `(let [^"[B" ba# ~ba] (String. ba# java.nio.charset.StandardCharsets/UTF_8)))}
+       ^String [^bytes ba]                       (String. ba  java.nio.charset.StandardCharsets/UTF_8))
 
      (defn ba-concat ^bytes [^bytes ba1 ^bytes ba2]
        (let [l1  (alength ba1)
