@@ -770,6 +770,20 @@
 ;;;; Types
 ;; Could really do with a portable ^boolean hint!
 
+#?(:cljs
+   (defn ^:no-doc type-name
+     "Returns human-readable type name for given arb value."
+     [x]
+     (cond
+       (nil? x)       "nil"
+       (undefined? x) "undefined"
+       :else
+       (let [ctor (type x)]
+         (or
+           (.-name ctor) (.-displayName ctor) (goog/typeOf x)
+           (try (pr-str ctor) (catch :default _ nil))
+           "unknown")))))
+
 (do
   #?(:clj  (defn          nempty-str? [x] (and (string? x) (not (.isEmpty ^String x))))
      :cljs (defn ^boolean nempty-str? [x] (and (string? x) (not (= x "")))))
