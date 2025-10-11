@@ -501,10 +501,7 @@
 
 ;;;; Strings
 
-#?(:clj
-   (deftest _utf8-byte-strings
-     (let [s enc/a-utf8-str]
-       (is (= (-> enc/a-utf8-str enc/str->utf8-ba enc/utf8-ba->str) s)))))
+(deftest _utf8-byte-strings (let [s enc/a-utf8-str] (is (= s (-> s enc/str->utf8-ba enc/utf8-ba->str)))))
 
 #?(:clj
    (deftest _hex-strings

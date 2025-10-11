@@ -2133,6 +2133,23 @@
 
 ;;;; Bytes
 
+#?(:cljs (defn ^:no-doc get-ctor "Private, don't use." [name] (when (exists? js/globalThis) (aget js/globalThis name))))
+#?(:cljs
+   (do
+     (let [encoder (when-let [ctor (get-ctor "TextEncoder")] (new ctor))]
+       (def str->utf8-ba
+         "Returns UTF-8 encoded Uint8Array for given string."
+         (if encoder
+           (fn [^string s] (.encode encoder s))
+           (fn [_] (truss/ex-info! "`js/TextEncoder` not available")))))
+
+     (let [decoder (when-let [ctor (get-ctor "TextDecoder")] (new ctor "utf-8"))]
+       (def utf8-ba->str
+         "Returns string for given UTF-8 encoded Uint8Array."
+         (if decoder
+           (fn [^js u8s] (.decode decoder u8s))
+           (fn [_] (truss/ex-info! "`js/TextDecoder` not available")))))))
+
 #?(:clj
    (do
      (def ^:const bytes-class (Class/forName "[B"))
