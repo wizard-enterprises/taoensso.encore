@@ -20,7 +20,7 @@
    :provided {:injections   [(println "Lein profile: :provided")]
               :dependencies [[org.clojure/clojurescript "1.12.42"]
                              [org.clojure/clojure       "1.11.4"]]}
-   :c1.12    {:dependencies [[org.clojure/clojure       "1.12.1"]]}
+   :c1.12    {:dependencies [[org.clojure/clojure       "1.12.3"]]}
    :c1.11    {:dependencies [[org.clojure/clojure       "1.11.4"]]}
    :c1.10    {:dependencies [[org.clojure/clojure       "1.10.3"]]}
 
@@ -62,8 +62,8 @@
     :dependencies
     [[org.clojure/test.check "1.1.1"]
      [org.clojure/core.async "1.8.741"]
-     [thheller/shadow-cljs   "3.1.8"]
-     [nrepl                  "1.3.1"]
+     [thheller/shadow-cljs   "3.2.1"]
+     [nrepl                  "1.4.0"]
      [cider/cider-nrepl      "0.57.0"]
      #_[com.google.javascript/closure-compiler-unshaded "v20250407"]]
 
