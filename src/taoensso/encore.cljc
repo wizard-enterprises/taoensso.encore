@@ -273,6 +273,7 @@
 
 (declare str-starts-with?)
 
+#?(:clj (defn- vec->do [x] (if (vector? x) `(do ~@x) x)))
 #?(:clj
    (defmacro ^:no-doc -cond [throw? & clauses]
      (if-let [[c1 c2 & more] (seq clauses)]
@@ -281,11 +282,7 @@
          (case c1
            (true :else :default :always :then) c2                          ; Avoid unnecessary (if <truthy> ...)
            (false nil)                             `(-cond ~throw? ~@more) ; Avoid unnecessary (if <falsey> ...)
-           :do
-           (if (vector? c2)
-             `(do ~@c2 (-cond ~throw? ~@more))
-             `(do  ~c2 (-cond ~throw? ~@more)))
-
+           :do               `(do ~(vec->do  c2)    (-cond ~throw? ~@more))
            :let              `(let          ~c2     (-cond ~throw? ~@more))
            :binding          `(core/binding ~c2     (-cond ~throw? ~@more))
            :with-redefs      `(with-redefs  ~c2     (-cond ~throw? ~@more))
@@ -300,7 +297,7 @@
            (:wrap->)         `(->  (-cond ~throw? ~@more) ~c2)
 
            ;;; 3-clause cases
-           (:if-let :if-some :if-not)
+           (:if-let :if-some :if-not :do-when :do-when-let :do-when-not :do-when-some)
            (if (empty? more) ; Missing 3rd clause
              (truss/ex-info!
                (str "[encore/cond] Missing 3rd clause after special keyword: " `(~'cond ~c1 ~c2 ~'<missing>)))
@@ -309,7 +306,12 @@
                (case c1
                  :if-let  `(if-let  ~c2 ~c3 (-cond ~throw? ~@more))
                  :if-some `(if-some ~c2 ~c3 (-cond ~throw? ~@more))
-                 :if-not  `(if-not  ~c2 ~c3 (-cond ~throw? ~@more)))))
+                 :if-not  `(if-not  ~c2 ~c3 (-cond ~throw? ~@more))
+
+                 ;; Experimental
+                 (:do-when :do-when-let) `(do (when      ~c2 ~(vec->do c3)) (-cond ~throw? ~@more))
+                 :do-when-not            `(do (when-not  ~c2 ~(vec->do c3)) (-cond ~throw? ~@more))
+                 :do-when-some           `(do (when-some ~c2 ~(vec->do c3)) (-cond ~throw? ~@more)))))
 
            (if (keyword? c1)
              (if (str-starts-with? (name c1) "_")
