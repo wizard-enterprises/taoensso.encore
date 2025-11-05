@@ -2671,7 +2671,7 @@
 
 (comment (format-inst (now-inst)))
 
-;;;; Date & time
+;;;; M/secs
 
 (defn secs->ms ^long [secs] (* (long secs)  1000))
 (defn ms->secs ^long [ms]   (quot (long ms) 1000))
@@ -2717,48 +2717,6 @@
       (taoensso.encore/ms opts))))
 
 (comment (macroexpand '(msecs :weeks 3)))
-
-#?(:clj
-   (defn- -simple-date-format
-     "Returns a SimpleDateFormat ThreadLocal proxy."
-     [pattern locale timezone]
-     (let [pattern
-           (case pattern
-             :iso8601 "yyyy-MM-dd'T'HH:mm:ss.SSSX"
-             :rss2    "EEE, dd MMM yyyy HH:mm:ss z"
-             pattern)
-
-           locale
-           (if (identical-kw? locale :jvm-default)
-             nil ; (Locale/getDefault)
-             locale)
-
-           timezone
-           (if (identical-kw? timezone :jvm-default)
-             nil ; (TimeZone/getDefault)
-             (if (identical-kw? timezone :utc)
-               (TimeZone/getTimeZone "UTC")
-               timezone))]
-
-       (threadlocal
-         (let [^SimpleDateFormat sdf
-               (if locale
-                 (SimpleDateFormat. ^String pattern ^Locale locale)
-                 (SimpleDateFormat. ^String pattern))]
-           (when timezone (.setTimeZone sdf ^TimeZone timezone))
-           sdf)))))
-
-#?(:clj
-   (defn simple-date-format*
-     ^java.text.SimpleDateFormat [pattern locale timezone]
-     (.get ^ThreadLocal (-simple-date-format pattern locale timezone))))
-
-#?(:clj
-   (defn simple-date-format "Returns a thread-local `java.text.SimpleDateFormat`."
-     ^java.text.SimpleDateFormat [pattern & [{:keys [locale timezone] :as opts}]]
-     (.get ^ThreadLocal (-simple-date-format pattern locale timezone))))
-
-(comment (qb 1e5 (.format (simple-date-format "yyyy-MMM-dd") (Date.))))
 
 ;;;; Strings
 
@@ -3139,7 +3097,7 @@
   "Private, don't use."
   [n-min-fd n-max-fd]
   #?(:clj
-     (let [nf-proxy
+     (let [tl:nf
            (threadlocal
              (let [nf (java.text.NumberFormat/getInstance java.util.Locale/US)]
                (when (instance? java.text.DecimalFormat nf)
@@ -3152,7 +3110,7 @@
                        (.setDecimalSeparator  \.)
                        (.setGroupingSeparator \,)))))))]
 
-       (fn [n] (.format ^java.text.NumberFormat (.get nf-proxy) n)))
+       (fn [n] (.format ^java.text.NumberFormat (.get tl:nf) n)))
 
      :cljs
      (let [nf
@@ -3632,12 +3590,11 @@
          (ReseedingSRNG. (java.security.SecureRandom/getInstanceStrong)      0)
          (ReseedingSRNG. (java.security.SecureRandom/getInstance "SHA1SRNG") 0)))
 
-     (def ^:private rsrng* (threadlocal (reseeding-srng)))
-
-     (defn secure-rng
-       "Returns an auto-reseeding thread-local `java.security.SecureRandom`.
-       Favours security over performance. May block while waiting on entropy!"
-       ^java.security.SecureRandom [] ((.get ^ThreadLocal rsrng*)))
+     (let [tl:rsrng (threadlocal (reseeding-srng))]
+       (defn secure-rng
+         "Returns an auto-reseeding thread-local `java.security.SecureRandom`.
+         Favours security over performance. May block while waiting on entropy!"
+         ^java.security.SecureRandom [] ((.get tl:rsrng))))
 
      (defn secure-rng-mock!!!
        "Returns **INSECURE** `java.security.SecureRandom` mock instance backed by
@@ -4992,6 +4949,51 @@
            nil))))))
 
 (comment (let [rl (rolling-list 3), c (counter)] [(qb 1e6 (rl (c))) (vec (rl))])) ; 98.36
+
+;;;; Date & time
+
+#?(:clj
+   (let [get-tl
+         (fmemoize
+           (fn [pattern locale timezone]
+             (threadlocal
+               (let [pattern
+                     (case pattern
+                       :iso8601 "yyyy-MM-dd'T'HH:mm:ss.SSSX"
+                       :rss2    "EEE, dd MMM yyyy HH:mm:ss z"
+                       pattern)
+
+                     locale
+                     (if (identical-kw? locale :jvm-default)
+                       nil #_(Locale/getDefault)
+                       locale)
+
+                     timezone
+                     (if (identical-kw? timezone :jvm-default)
+                       nil #_(TimeZone/getDefault)
+                       (if (identical-kw? timezone :utc)
+                         (TimeZone/getTimeZone "UTC")
+                         timezone))
+
+                     ^SimpleDateFormat sdf
+                     (if locale
+                       (SimpleDateFormat. ^String pattern ^Locale locale)
+                       (SimpleDateFormat. ^String pattern))]
+
+                 (when timezone (.setTimeZone sdf ^TimeZone timezone))
+                 (do                          sdf)))))]
+
+     (defn simple-date-format*
+       "Returns a thread-local `java.text.SimpleDateFormat`."
+       ^java.text.SimpleDateFormat [pattern locale timezone]
+       (.get ^ThreadLocal (get-tl   pattern locale timezone)))
+
+     (defn simple-date-format
+       "Returns a thread-local `java.text.SimpleDateFormat`."
+       ^java.text.SimpleDateFormat [pattern & [{:keys [locale timezone] :as opts}]]
+       (.get ^ThreadLocal (get-tl   pattern            locale timezone)))))
+
+(comment (qb 1e5 (.format (simple-date-format "yyyy-MMM-dd") (Date.))))
 
 ;;;; Sorting
 
