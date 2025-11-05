@@ -3658,7 +3658,7 @@
      (defn ^:no-doc reseeding-srng
        "Private, don't use. Returns a new stateful `ReseedingSRNG`."
        ^ReseedingSRNG []
-       (compile-if        (java.security.SecureRandom/getInstanceStrong) ; Java 8+, blocking
+       (compile-if       (java.security.SecureRandom/getInstanceStrong) ; Java 8+, blocking
          (ReseedingSRNG. (java.security.SecureRandom/getInstanceStrong)      0)
          (ReseedingSRNG. (java.security.SecureRandom/getInstance "SHA1SRNG") 0)))
 
