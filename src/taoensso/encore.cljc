@@ -2466,10 +2466,11 @@
 #?(:clj
    (defmacro threadlocal
      "Returns `java.lang.ThreadLocal` with given initial value."
-     [& init-val]
-     `(ThreadLocal/withInitial
-        (reify java.util.function.Supplier
-          (get [_this#] (do ~@init-val))))))
+     ([          ] `(ThreadLocal.))
+     ([& init-val]
+      `(ThreadLocal/withInitial
+         (reify java.util.function.Supplier
+           (get [_this#] (do ~@init-val)))))))
 
 (comment
   (let [tl:sdf (threadlocal (SimpleDateFormat. "yyyy-MM-dd"))]
