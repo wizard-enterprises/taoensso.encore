@@ -2463,47 +2463,17 @@
     true
     false))
 
-;;;; Thread locals
-
 #?(:clj
-   (defmacro thread-local-proxy "Low-level, see `thread-local` instead."
-     [& body] `(proxy [ThreadLocal] [] (initialValue [] (do ~@body)))))
-
-#?(:clj
-   (defn thread-local*
-     "Low-level, see `thread-local` instead."
-     [init-val-fn]
-     (let [p (proxy [ThreadLocal] [] (initialValue [] (init-val-fn)))]
-       (reify clojure.lang.IDeref (deref [this] (.get p))))))
-
-#?(:clj
-   (defmacro thread-local
-     "Given a body that returns an initial value for the current thread,
-     returns a `ThreadLocal` proxy that can be derefed to get the current
-     thread's current value.
-
-     Commonly used to achieve thread safety during Java interop.
-     In the common case, `body` will be a call to some Java constructor
-     that returns a non-thread-safe instance.
-
-     Example:
-       (def thread-local-simple-date-format_
-         \"Deref to return a thread-local `SimpleDateFormat`\"
-         (thread-local (SimpleDateFormat. \"yyyy-MM-dd\")))
-
-       (.format @thread-local-simple-date-format_ (Date.)) => \"2023-01-24\"
-
-     NB: don't pass the derefed value to other threads!"
-     [& body] `(thread-local* (fn [] ~@body))))
+   (defmacro threadlocal
+     "Returns `java.lang.ThreadLocal` with given initial value."
+     [& init-val]
+     `(ThreadLocal/withInitial
+        (reify java.util.function.Supplier
+          (get [_this#] (do ~@init-val))))))
 
 (comment
-  (def      thread-local-simple-date-format_ (thread-local (SimpleDateFormat. "yyyy-MM-dd")))
-  (.format @thread-local-simple-date-format_ (Date.))
-
-  (let [tl_ (thread-local       "init-val")
-        tlp (thread-local-proxy "init-val")]
-    (qb 1e6 ; [30.54 54.03]
-      (.get ^ThreadLocal tlp) @tl_)))
+  (let [tl:sdf (threadlocal (SimpleDateFormat. "yyyy-MM-dd"))]
+    (.format (.get tl:sdf) (Date.))))
 
 ;;;; Instants
 ;; `inst` - Platform instant (`java.time.Instant` or `js/Date`)
@@ -2770,7 +2740,7 @@
                (TimeZone/getTimeZone "UTC")
                timezone))]
 
-       (thread-local-proxy
+       (threadlocal
          (let [^SimpleDateFormat sdf
                (if locale
                  (SimpleDateFormat. ^String pattern ^Locale locale)
@@ -3169,8 +3139,8 @@
   "Private, don't use."
   [n-min-fd n-max-fd]
   #?(:clj
-     (let [^ThreadLocal nf-proxy
-           (thread-local-proxy
+     (let [nf-proxy
+           (threadlocal
              (let [nf (java.text.NumberFormat/getInstance java.util.Locale/US)]
                (when (instance? java.text.DecimalFormat nf)
                  (doto ^java.text.DecimalFormat nf
@@ -3662,7 +3632,7 @@
          (ReseedingSRNG. (java.security.SecureRandom/getInstanceStrong)      0)
          (ReseedingSRNG. (java.security.SecureRandom/getInstance "SHA1SRNG") 0)))
 
-     (def ^:private rsrng* (thread-local-proxy (reseeding-srng)))
+     (def ^:private rsrng* (threadlocal (reseeding-srng)))
 
      (defn secure-rng
        "Returns an auto-reseeding thread-local `java.security.SecureRandom`.
@@ -7413,3 +7383,10 @@
          (if (:ns &env)
            `(cljs.core/binding    ~bindings ~@body)
            `(clojure.core/binding ~bindings ~@body)))))
+
+(deprecated "2025-11 ThreadLocal utils"
+  #?(:clj (defmacro ^:no-doc ^:deprecated thread-local-proxy "Prefer `threadlocal`." [& body] `(proxy [ThreadLocal] [] (initialValue [] (do ~@body)))))
+  #?(:clj (defmacro ^:no-doc ^:deprecated thread-local       "Prefer `threadlocal`." [& body] ^:deprecation-nowarn `(thread-local* (fn [] ~@body))))
+  #?(:clj (defn     ^:no-doc ^:deprecated thread-local*      "Prefer `threadlocal`." [init-val-fn]
+            (let [p (thread-local-proxy (init-val-fn))]
+              (reify clojure.lang.IDeref (deref [this] (.get p)))))))
