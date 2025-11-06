@@ -1,5 +1,9 @@
 <a href="https://www.taoensso.com/clojure" title="More stuff by @ptaoussanis at www.taoensso.com"><img src="https://www.taoensso.com/open-source.png" alt="Taoensso open source" width="340"/></a>  
-[**API**][cljdoc] | [**Wiki**][GitHub wiki] | [Latest releases](#latest-releases) | [Slack channel][] or [Get support][GitHub issues]
+[**API**][cljdoc] | [**Wiki**][GitHub wiki] | [Slack][] or [Support][GitHub issues] | Latest release: [vTODO](../../releases/tag/vTODO) (YYYY-MM-DD)
+
+[![Clj tests][Clj tests SVG]][Clj tests URL]
+[![Cljs tests][Cljs tests SVG]][Cljs tests URL]
+[![Graal tests][Graal tests SVG]][Graal tests URL]
 
 <!-- ../../ from README to get to base of GitHub project -->
 <!-- ../ from wiki to get to base of GitHub project -->
@@ -14,21 +18,6 @@ or
 ### TODO Library blurb
 
 TODO Detailed description
-
-## Latest release/s
-
-[![Clojars project][Clojars SVG]][Clojars URL] 
-
-TODO Clojars above, or
-
-- `YYYY-MM-DD` `vX.Y.Z` (dev): [release info](../../releases/tag/vTODO)
-- `YYYY-MM-DD` `vX.Y.Z` (stable): [release info](../../releases/tag/vTODO)
-
-[![Clj tests][Clj tests SVG]][Clj tests URL]
-[![Cljs tests][Cljs tests SVG]][Cljs tests URL]
-[![Graal tests][Graal tests SVG]][Graal tests URL]
-
-See [here][GitHub releases] for earlier releases.
 
 ## Why TODO?
 
@@ -48,7 +37,7 @@ See for  intro and usage:
 
 - [Wiki][GitHub wiki] (getting started, usage, etc.)
 - API reference via [cljdoc][cljdoc]
-- Support via [Slack channel][] or [GitHub issues][]
+- Support via [Slack][] or [GitHub issues][]
 
 ## Funding
 
@@ -64,7 +53,7 @@ Licensed under [EPL 1.0](LICENSE.txt) (same as Clojure).
 [GitHub releases]: ../../releases
 [GitHub issues]:   ../../issues
 [GitHub wiki]:     ../../wiki
-[Slack channel]: https://www.taoensso.com/TODO/slack
+[Slack]: https://www.taoensso.com/TODO/slack
 
 [Peter Taoussanis]: https://www.taoensso.com
 [sponsor]:          https://www.taoensso.com/sponsor

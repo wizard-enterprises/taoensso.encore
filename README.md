@@ -1,5 +1,10 @@
 <a href="https://www.taoensso.com/clojure" title="More stuff by @ptaoussanis at www.taoensso.com"><img src="https://www.taoensso.com/open-source.png" alt="Taoensso open source" width="340"/></a>  
-[**API**][cljdoc] | [**Wiki**][GitHub wiki] | [Latest releases](#latest-releases) | [Get support][GitHub issues]
+[**API**][cljdoc] | [**Wiki**][GitHub wiki] | [Support][GitHub issues] | Latest release: [on Clojars][Clojars URL]
+
+[![Clojars project][Clojars SVG]][Clojars URL]
+[![Clj tests][Clj tests SVG]][Clj tests URL]
+[![Cljs tests][Cljs tests SVG]][Cljs tests URL]
+[![Graal tests][Graal tests SVG]][Graal tests URL]
 
 # Encore
 
@@ -10,14 +15,6 @@ A set of general-purpose cross-platform utilities for Clojure/Script. Or: what h
 Encore is intended mainly as a private dependency for [my other libraries](https://www.taoensso.com/my-work), or for **advanced users** who are comfortable reading the docstrings, source, and commit history for more info.
 
 Always use the **latest stable version** of Encore when possible.
-
-## Latest release/s
-
-[![Clojars project][Clojars SVG]][Clojars URL]
-
-[![Clj tests][Clj tests SVG]][Clj tests URL]
-[![Cljs tests][Cljs tests SVG]][Cljs tests URL]
-[![Graal tests][Graal tests SVG]][Graal tests URL]
 
 ## Documentation
 
@@ -38,7 +35,7 @@ Licensed under [EPL 1.0](LICENSE.txt) (same as Clojure).
 [GitHub releases]: ../../releases
 [GitHub issues]:   ../../issues
 [GitHub wiki]:     ../../wiki
-[Slack channel]: https://www.taoensso.com/encore/slack
+[Slack]: https://www.taoensso.com/encore/slack
 
 [Peter Taoussanis]: https://www.taoensso.com
 [sponsor]:          https://www.taoensso.com/sponsor
