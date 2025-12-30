@@ -642,8 +642,8 @@
             alias-attrs (dissoc alias-attrs :link?)
 
             final-attrs
-            (select-keys (core/merge src-attrs (meta src-sym) (meta alias-sym) alias-attrs)
-              [:doc :no-doc :arglists :private :macro :added :deprecated :inline :tag :redef])
+            (-> (core/merge src-attrs (meta src-sym) (meta alias-sym) alias-attrs)
+                (dissoc :name))
 
             alias-sym   (with-meta alias-sym final-attrs)
             alias-body  (or alias-body (if cljs? src-sym `@~src-var))]
